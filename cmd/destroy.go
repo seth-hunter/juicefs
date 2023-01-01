@@ -153,7 +153,7 @@ func destroy(ctx *cli.Context) error {
 		}
 	}
 
-	objs, err := osync.ListAll(blob, "", "")
+	objs, err := osync.ListAll(blob, "", "", false)
 	if err != nil {
 		logger.Fatalf("list all objects: %s", err)
 	}

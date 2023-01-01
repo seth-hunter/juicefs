@@ -73,7 +73,7 @@ func formatSize(bytes int64) string {
 }
 
 // ListAll on all the keys that starts at marker from object storage.
-func ListAll(store object.ObjectStorage, start, end string) (<-chan object.Object, error) {
+func ListAll(store object.ObjectStorage, start, end string, failIfUnsorted bool) (<-chan object.Object, error) {
 	startTime := time.Now()
 	logger.Debugf("Iterating objects from %s start %q", store, start)
 
@@ -128,7 +128,7 @@ func ListAll(store object.ObjectStorage, start, end string) (<-chan object.Objec
 		for len(objs) > 0 {
 			for _, obj := range objs {
 				key := obj.Key()
-				if !first && key <= lastkey {
+				if !first && key <= lastkey && failIfUnsorted {
 					logger.Errorf("The keys are out of order: marker %q, last %q current %q", marker, lastkey, key)
 					out <- nil
 					break END
@@ -634,12 +634,12 @@ func startProducer(tasks chan<- object.Object, src, dst object.ObjectStorage, co
 	}
 	logger.Debugf("maxResults: %d, defaultPartSize: %d, maxBlock: %d", maxResults, defaultPartSize, maxBlock)
 
-	srckeys, err := ListAll(src, start, end)
+	srckeys, err := ListAll(src, start, end, true)
 	if err != nil {
 		return fmt.Errorf("list %s: %s", src, err)
 	}
 
-	dstkeys, err := ListAll(dst, start, end)
+	dstkeys, err := ListAll(dst, start, end, true)
 	if err != nil {
 		return fmt.Errorf("list %s: %s", dst, err)
 	}

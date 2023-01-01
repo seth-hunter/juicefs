@@ -186,7 +186,7 @@ func (s *s3client) List(prefix, marker, delimiter string, limit int64) ([]Object
 	objs := make([]Object, n)
 	for i := 0; i < n; i++ {
 		o := resp.Contents[i]
-		if !strings.HasPrefix(*o.Key, prefix) || *o.Key < marker {
+		if !strings.HasPrefix(*o.Key, prefix) {
 			return nil, fmt.Errorf("found invalid key %s from List, prefix: %s, marker: %s", *o.Key, prefix, marker)
 		}
 		objs[i] = &obj{

@@ -543,7 +543,7 @@ func (bm *benchMarkObj) head(key string, startKey int) error {
 }
 
 func (bm *benchMarkObj) list(key string, startKey int) error {
-	result, err := osync.ListAll(bm.blob, "", "")
+	result, err := osync.ListAll(bm.blob, "", "", false)
 	for range result {
 	}
 	return err
